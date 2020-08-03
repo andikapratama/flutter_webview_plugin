@@ -20,6 +20,7 @@ class WebviewScaffold extends StatefulWidget {
     this.mediaPlaybackRequiresUserGesture = true,
     this.enableAppScheme,
     this.userAgent,
+    this.postData,
     this.primary = true,
     this.persistentFooterButtons,
     this.bottomNavigationBar,
@@ -53,6 +54,7 @@ class WebviewScaffold extends StatefulWidget {
   final bool mediaPlaybackRequiresUserGesture;
   final bool enableAppScheme;
   final String userAgent;
+  final String postData;
   final bool primary;
   final List<Widget> persistentFooterButtons;
   final Widget bottomNavigationBar;
@@ -111,8 +113,7 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
     });
 
     if (widget.hidden) {
-      _onStateChanged =
-          webviewReference.onStateChanged.listen((WebViewStateChanged state) {
+      _onStateChanged = webviewReference.onStateChanged.listen((WebViewStateChanged state) {
         if (state.type == WebViewState.finishLoad) {
           webviewReference.show();
         }
@@ -161,6 +162,7 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
               clearCache: widget.clearCache,
               clearCookies: widget.clearCookies,
               mediaPlaybackRequiresUserGesture: widget.mediaPlaybackRequiresUserGesture,
+              postData: widget.postData,
               hidden: widget.hidden,
               enableAppScheme: widget.enableAppScheme,
               userAgent: widget.userAgent,
@@ -192,8 +194,7 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
             }
           }
         },
-        child: widget.initialChild ??
-            const Center(child: const CircularProgressIndicator()),
+        child: widget.initialChild ?? const Center(child: const CircularProgressIndicator()),
       ),
     );
   }
@@ -216,8 +217,7 @@ class _WebviewPlaceholder extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, _WebviewPlaceholderRender renderObject) {
+  void updateRenderObject(BuildContext context, _WebviewPlaceholderRender renderObject) {
     renderObject..onRectChanged = onRectChanged;
   }
 }

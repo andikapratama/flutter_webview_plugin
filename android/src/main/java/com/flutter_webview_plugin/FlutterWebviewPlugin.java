@@ -125,6 +125,7 @@ public class FlutterWebviewPlugin implements MethodCallHandler, PluginRegistry.A
         boolean allowFileURLs = call.argument("allowFileURLs");
         boolean useWideViewPort = call.argument("useWideViewPort");
         String invalidUrlRegex = call.argument("invalidUrlRegex");
+        String postData = call.argument("postData");
         boolean geolocationEnabled = call.argument("geolocationEnabled");
         boolean debuggingEnabled = call.argument("debuggingEnabled");
         boolean ignoreSSLErrors = call.argument("ignoreSSLErrors");
@@ -147,6 +148,7 @@ public class FlutterWebviewPlugin implements MethodCallHandler, PluginRegistry.A
                 hidden,
                 clearCookies,
                 mediaPlaybackRequiresUserGesture,
+                postData,
                 userAgent,
                 url,
                 headers,

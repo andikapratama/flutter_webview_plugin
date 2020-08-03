@@ -365,6 +365,7 @@ class WebviewManager {
             boolean hidden,
             boolean clearCookies,
             boolean mediaPlaybackRequiresUserGesture,
+            String postData,
             String userAgent,
             String url,
             Map<String, String> headers,
@@ -440,7 +441,9 @@ class WebviewManager {
             webView.setVerticalScrollBarEnabled(false);
         }
 
-        if (headers != null) {
+        if (postData != null) {
+            webView.postUrl(url, postData.getBytes());
+        } else if (headers != null) {
             webView.loadUrl(url, headers);
         } else {
             webView.loadUrl(url);

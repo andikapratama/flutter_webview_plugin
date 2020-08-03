@@ -17,7 +17,7 @@ enum WebViewState { shouldStart, startLoad, finishLoad, abortLoad }
 /// Singleton class that communicate with a Webview Instance
 class FlutterWebviewPlugin {
   factory FlutterWebviewPlugin() {
-    if(_instance == null) {
+    if (_instance == null) {
       const MethodChannel methodChannel = const MethodChannel(_kChannel);
       _instance = FlutterWebviewPlugin.private(methodChannel);
     }
@@ -76,12 +76,10 @@ class FlutterWebviewPlugin {
         );
         break;
       case 'onHttpError':
-        _onHttpError.add(
-            WebViewHttpError(call.arguments['code'], call.arguments['url']));
+        _onHttpError.add(WebViewHttpError(call.arguments['code'], call.arguments['url']));
         break;
       case 'javascriptChannelMessage':
-        _handleJavascriptChannelMessage(
-            call.arguments['channel'], call.arguments['message']);
+        _handleJavascriptChannelMessage(call.arguments['channel'], call.arguments['message']);
         break;
     }
   }
@@ -149,6 +147,7 @@ class FlutterWebviewPlugin {
     bool clearCache,
     bool clearCookies,
     bool mediaPlaybackRequiresUserGesture,
+    String postData,
     bool hidden,
     bool enableAppScheme,
     Rect rect,
@@ -171,6 +170,7 @@ class FlutterWebviewPlugin {
   }) async {
     final args = <String, dynamic>{
       'url': url,
+      'postData': postData,
       'withJavascript': withJavascript ?? true,
       'clearCache': clearCache ?? false,
       'hidden': hidden ?? false,
@@ -211,8 +211,7 @@ class FlutterWebviewPlugin {
       }
     }
 
-    args['javascriptChannelNames'] =
-        _extractJavascriptChannelNames(javascriptChannels).toList();
+    args['javascriptChannelNames'] = _extractJavascriptChannelNames(javascriptChannels).toList();
 
     if (rect != null) {
       args['rect'] = {
@@ -274,13 +273,13 @@ class FlutterWebviewPlugin {
   // Clean cookies on WebView
   Future<Null> cleanCookies() async {
     // one liner to clear javascript cookies
-    await evalJavascript('document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });');
+    await evalJavascript(
+        'document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });');
     return await _channel.invokeMethod('cleanCookies');
   }
 
   // Stops current loading process
-  Future<Null> stopLoading() async =>
-      await _channel.invokeMethod('stopLoading');
+  Future<Null> stopLoading() async => await _channel.invokeMethod('stopLoading');
 
   /// Close all Streams
   void dispose() {
@@ -329,14 +328,11 @@ class FlutterWebviewPlugin {
     return channelNames;
   }
 
-  void _handleJavascriptChannelMessage(
-      final String channelName, final String message) {
-    _javascriptChannels[channelName]
-        .onMessageReceived(JavascriptMessage(message));
+  void _handleJavascriptChannelMessage(final String channelName, final String message) {
+    _javascriptChannels[channelName].onMessageReceived(JavascriptMessage(message));
   }
 
-  void _assertJavascriptChannelNamesAreUnique(
-      final Set<JavascriptChannel> channels) {
+  void _assertJavascriptChannelNamesAreUnique(final Set<JavascriptChannel> channels) {
     if (channels == null || channels.isEmpty) {
       return;
     }
